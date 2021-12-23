@@ -1,0 +1,38 @@
+.searchContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.searchBox {
+  position: relative;
+}
+.searchInput {
+  height: 40px;
+  width: 250px;
+  border-radius: 5px;
+  padding: 5px 32px 5px 10px;
+  border: 1px solid #555;
+  font-size: 1.2rem;
+}
+
+.searchInput:focus {
+  outline: none; /*Elimina el borde cuando el input tiene el foco*/
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.searchButton {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  cursor: pointer;
+  height: 100%;
+
+  border: none;
+  background: transparent;
+  color: #555;
+}
+
+.searchButton:focus {
+  outline: none;
+}

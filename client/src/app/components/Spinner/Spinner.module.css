@@ -1,0 +1,16 @@
+.spinner {
+  text-align: center;
+  /* padding-top: 55px; */
+  padding: 55px;
+}
+
+.spinning {
+  /* animation: name duration function; */
+  animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}

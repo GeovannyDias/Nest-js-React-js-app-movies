@@ -1,0 +1,35 @@
+.detailContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.col {
+  max-width: 400px;
+  margin: 15px;
+  height: 80%;
+}
+
+.movieImage {
+  border-radius: 15px;
+  width: 100%;
+  /* height: auto; */
+}
+
+.movieDetails {
+  font-size: 1.2rem;
+}
+
+.movieDetails p {
+  margin-bottom: 15px;
+}
+
+.table {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .movieImage {
+    width: 90%;
+  }
+}

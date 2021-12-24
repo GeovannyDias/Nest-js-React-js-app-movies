@@ -55,7 +55,7 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-// COMPONENT
+// COMPONENT FUNCTION
 export function TableActors() {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("first_name");
@@ -77,17 +77,17 @@ export function TableActors() {
   // GET DATA
   useEffect(() => {
     setIsLoading(true);
-    getADataActors();
+    getDataActors();
   }, []);
 
-  async function getADataActors() {
+  async function getDataActors() {
     await getActors().then((data) => {
       setActors(data);
       setIsLoading(false);
     });
   }
 
-  // ACTIONS BUTTONS
+  // ACTION BUTTONS
 
   function handleUpdate(actor) {
     setValue({ edit: true, data: actor, title: "Update Actor" });
@@ -97,7 +97,7 @@ export function TableActors() {
   async function handleDelete(id) {
     await deleteActor(id).then((res) => {
       notifyError(res.message, "bottom-right");
-      getADataActors();
+      getDataActors();
     });
   }
 
@@ -136,7 +136,7 @@ export function TableActors() {
     setOpen(false);
     if (data) {
       console.log("dataRES:", data);
-      getADataActors();
+      getDataActors();
     }
   };
 

@@ -15,31 +15,17 @@ import { EnhancedTableToolbar } from "./components/EnhancedTableToolbar";
 import { deleteMovie, getMovies } from "../../services/movie.service";
 import { Spinner } from "../Spinner/Spinner";
 import { Empty } from "../Empty/Empty";
-import styles from "./TableMovies.module.css";
+// import styles from "./TableMovies.module.css";
 
 import IconButton from "@mui/material/IconButton";
 import { useHistory } from "react-router-dom";
+import { notifyError } from "../../services";
+import { DialogMovie } from "./components/DialogMovie";
+import { ToastContainer } from "react-toastify";
 
-// name, duration, gender, state, actions
-// function createData(name, duration, gender, state, protein) {
-//   return { name, duration, gender, state, protein };
-// }
-
-// const rows = [
-//   createData("Lo que el viento", 1254, 3.7, 67, 4.3),
-//   createData("Donut", 452, 25.0, 51, 4.9),
-//   createData("Eclair", 262, 16.0, 24, 6.0),
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-//   createData("Honeycomb", 408, 3.2, 87, 6.5),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Jelly Bean", 375, 0.0, 94, 0.0),
-//   createData("KitKat", 518, 26.0, 65, 7.0),
-//   createData("Lollipop", 392, 0.2, 98, 0.0),
-//   createData("Marshmallow", 318, 0, 81, 2.0),
-//   createData("Nougat", 360, 19.0, 9, 37.0),
-//   createData("Oreo", 437, 18.0, 63, 4.0),
-// ];
+// *************************************************************************************************
+// FUNCTIONS
+// *************************************************************************************************
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -71,31 +57,57 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-// COMPONENT
+// COMPONENT FUNCTION
 export function TableMovies() {
-  const history = useHistory();
+  const history = useHistory(); // RedirecTo
 
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // Data
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Dialog
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState({
+    edit: false,
+    data: null,
+    title: "",
+  });
 
   // GET DATA
   useEffect(() => {
     setIsLoading(true);
-    getMovies().then((data) => {
+    getDataMovies();
+  }, []);
+
+  async function getDataMovies() {
+    await getMovies().then((data) => {
       setMovies(data);
       setIsLoading(false);
     });
-  }, []);
+  }
+
+  // ACTION BUTTONS
+
+  function handleUpdate(movie) {
+    setValue({ edit: true, data: movie, title: "Update Movie" });
+    setOpen(true);
+  }
 
   async function handleDelete(id) {
     await deleteMovie(id).then((res) => {
-      // console.log("ID:", id, "Res:", res);
+      notifyError(res.message, "bottom-right");
+      getDataMovies();
     });
+  }
+
+  function handleView(id) {
+    console.log(id);
+    history.push("/movie/" + id);
   }
 
   // Load data
@@ -118,21 +130,29 @@ export function TableMovies() {
     setPage(0);
   };
 
-  // ACTIONS BUTTON
-
-  function handleView(id) {
-    console.log(id);
-    history.push("/movie/" + id);
-  }
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - movies.length) : 0;
 
+  // DIALOG COMPONENT
+
+  const handleAddClick = () => {
+    setValue({ edit: false, data: null, title: "New Movie" });
+    setOpen(true);
+  };
+
+  const handleClose = (data) => {
+    setOpen(false);
+    if (data) {
+      console.log("dataRES:", data);
+      getDataMovies();
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar />
+        <EnhancedTableToolbar onAddClick={handleAddClick} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -203,6 +223,15 @@ export function TableMovies() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <DialogMovie
+        id="ringtone-menu"
+        keepMounted
+        open={open}
+        onClose={handleClose}
+        content={value}
+        key={open}
+      />
+      <ToastContainer />
     </Box>
   );
 }
